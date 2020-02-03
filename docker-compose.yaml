@@ -22,7 +22,7 @@ services:
     volumes:
       - ./config:/etc/traefik
       - /var/run/docker.sock:/var/run/docker.sock
-      - traefik_vol:/data/
+      - traefik_vol:/data
     networks:
       landrs:
         aliases:
@@ -33,12 +33,11 @@ services:
     build: ../trifid
     labels:
       - traefik.http.routers.trifid.rule=Host(`ld.landrs.org`)
-      - traefik.http.routers.frontend.tls=true
-      - traefik.http.routers.frontend.tls.certresolver=le
-      - traefik.http.routers.frontend.tls.options=mintls
-      - traefik.http.services.trifid.loadbalancer.server.port=8080
-   networks:
-     - landrs
+      - traefik.http.routers.trifid.tls=true
+      - traefik.http.routers.trifid.tls.certresolver=le
+      - traefik.http.routers.trifid.tls.options=mintls
+    networks:
+      - landrs
 
   fuseki-geosparql:
     image: landrs/fuseki-geosparql
