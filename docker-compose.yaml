@@ -35,7 +35,6 @@ services:
       - traefik.http.routers.trifid.rule=Host(`ld.landrs.org`)
       - traefik.http.routers.trifid.tls=true
       - traefik.http.routers.trifid.tls.certresolver=le
-      - traefik.http.routers.trifid.tls.options=mintls
     networks:
       - landrs
 
