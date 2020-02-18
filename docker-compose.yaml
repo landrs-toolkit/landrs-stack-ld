@@ -46,10 +46,34 @@ services:
       - geosparql_vol:/jena-fuseki
     networks:
       - landrs
+
+  data-cube:
+    image: landrs/data-cube
+    build: ../data-cube
+    environment:
+      BASE_URI: http://cube.landrs.org
+      VUE_APP_API_URL: http://cube.landrs.org
+      SPARQL_ENDPOINT: http://fuseki-geosparql:3030/ds/query
+      SPARQL_UPDATE_ENDPOINT: http://fuseki-geosparql:3030/ds/update
+      READ_MODEL_SPARQL_ENDPOINT: http://fuseki-geosparql:3030/ds/query
+      READ_MODEL_SPARQL_UPDATE_ENDPOINT: http://fuseki-geosparql:3030/ds/update
+      DEBUG: "*:error,dataCube:request,dataCube"
+      STORAGE_FILESYSTEM_PATH: /uploads
+      NODE_ENV: production
+    labels:
+      - traefik.http.routers.cube.rule=Host(`cube.landrs.org`)
+      - traefik.http.services.cube.loadbalancer.server.port=8080
+      - traefik.http.routers.trifid.tls=true
+      - traefik.http.routers.trifid.tls.certresolver=le
+    volumes:
+      - data-cube_vol:/uploads
+    networks:
+      - landrs
       
 volumes:
   geosparql_vol:
   traefik_vol:
+  data-cube_vol:
 
 networks:
   landrs:
