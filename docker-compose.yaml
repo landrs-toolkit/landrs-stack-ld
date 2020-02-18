@@ -41,12 +41,12 @@ services:
   fuseki-geosparql:
     image: landrs/fuseki-geosparql
     build: ../fuseki
-    command: -l false -u -rf "/geosparql_test.rdf>xml"
+    command: -l false -i -dg -v -u -rf "/base.ttl>ttl"
     volumes:
       - geosparql_vol:/jena-fuseki
     networks:
       - landrs
-      
+
 volumes:
   geosparql_vol:
   traefik_vol:
