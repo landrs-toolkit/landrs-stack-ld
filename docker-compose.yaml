@@ -50,13 +50,18 @@ services:
       - traefik.http.routers.trifid-query.rule=(Host(`ld.landrs.org`) && Path(`/query`))
       - traefik.http.routers.trifid-query.service=trifid@docker
       - traefik.http.routers.trifid-query.priority=2
+      - traefik.http.routers.trifid-query.tls=true
+      - traefik.http.routers.trifid-query.tls.certresolver=le
       - traefik.http.middlewares.trifid-query.replacepath.path=/ds
       - traefik.http.routers.trifid-query.middlewares=trifid-query
       - traefik.http.routers.trifid-update.rule=(Host(`ld.landrs.org`) && Path(`/update`))
       - traefik.http.routers.trifid-update.service=trifid@docker
       - traefik.http.routers.trifid-update.priority=3
+      - traefik.http.routers.trifid-update.tls=true
+      - traefik.http.routers.trifid-update.tls.certresolver=le
       - traefik.http.middlewares.trifid-update.replacepath.path=/ds/update
-      - traefik.http.routers.trifid-update.middlewares=trifid-update
+      - traefik.http.middlewares.trifid-update-auth.basicauth.users=admin:$$2y$$10$$qT00E87LP6o15pUSFNnirusP.DxUhpxE8lPBrxOgQMq7c9flvd.Vm
+      - traefik.http.routers.trifid-update.middlewares=trifid-update,trifid-update-auth
     networks:
       - landrs
 
