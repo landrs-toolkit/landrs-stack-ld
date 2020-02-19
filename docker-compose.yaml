@@ -33,6 +33,7 @@ services:
     build: ../trifid
     labels:
       - traefik.http.routers.trifid.rule=Host(`ld.landrs.org`)
+      - traefik.http.routers.trifid.priority=1
       - traefik.http.routers.trifid.tls=true
       - traefik.http.routers.trifid.tls.certresolver=le
     networks:
@@ -44,6 +45,18 @@ services:
     command: -l false -i -dg -v -u -rf "/base.ttl>ttl"
     volumes:
       - geosparql_vol:/jena-fuseki
+    labels:
+      - traefik.http.services.trifid.loadbalancer.server.port=3030
+      - traefik.http.routers.trifid-query.rule=(Host(`ld.landrs.org`) && Path(`/query`))
+      - traefik.http.routers.trifid-query.service=trifid@docker
+      - traefik.http.routers.trifid-query.priority=2
+      - traefik.http.middlewares.trifid-query.replacepath.path=/ds
+      - traefik.http.routers.trifid-query.middlewares=trifid-query
+      - traefik.http.routers.trifid-update.rule=(Host(`ld.landrs.org`) && Path(`/update`))
+      - traefik.http.routers.trifid-update.service=trifid@docker
+      - traefik.http.routers.trifid-update.priority=3
+      - traefik.http.middlewares.trifid-update.replacepath.path=/ds/update
+      - traefik.http.routers.trifid-update.middlewares=trifid-update
     networks:
       - landrs
 
