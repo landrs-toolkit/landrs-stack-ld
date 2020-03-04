@@ -39,6 +39,25 @@ services:
     networks:
       - landrs
 
+  docs:
+    image: landrs/docs
+    build: ../docs
+    labels:
+      - traefik.http.routers.docs.rule=(Host(`ld.landrs.org`) && PathPrefix(`/docs`))
+      - traefik.http.routers.docs.priority=2
+      - traefik.http.routers.docs.tls=true
+      - traefik.http.routers.docs.tls.certresolver=le
+      - traefik.http.services.docs.loadbalancer.server.port=80
+      - traefik.http.middlewares.strip-prefix.chain.middlewares=strip-prefix-1,strip-prefix-2
+      - traefik.http.middlewares.strip-prefix-1.redirectregex.regex=^(https?://[^/]+/[a-z0-9_]+)$$
+      - traefik.http.middlewares.strip-prefix-1.redirectregex.replacement=$${1}/
+      - traefik.http.middlewares.strip-prefix-1.redirectregex.permanent=true
+      - traefik.http.middlewares.strip-prefix-2.stripprefixregex.regex=/[a-z0-9_]+
+      - traefik.http.routers.docs.middlewares=strip-prefix
+    networks:
+      - landrs
+
+
   fuseki-geosparql:
     image: landrs/fuseki-geosparql
     build: ../fuseki
