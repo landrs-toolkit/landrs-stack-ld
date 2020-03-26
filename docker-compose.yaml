@@ -11,6 +11,7 @@ services:
       - --certificatesresolvers.le.acme.email=admin@example.com
       - --certificatesresolvers.le.acme.storage=/data/acme.json
       - --certificatesresolvers.le.acme.tlschallenge=true
+    # Comment out labels block below for local dev
     labels:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
@@ -34,8 +35,9 @@ services:
     labels:
       - traefik.http.routers.trifid.rule=Host(`ld.landrs.org`)
       - traefik.http.routers.trifid.priority=1
-      - traefik.http.routers.trifid.tls=true
-      - traefik.http.routers.trifid.tls.certresolver=le
+      # Comment out lines below for local dev
+      # - traefik.http.routers.trifid.tls=true
+      # - traefik.http.routers.trifid.tls.certresolver=le
     networks:
       - landrs
 
@@ -45,8 +47,6 @@ services:
     labels:
       - traefik.http.routers.docs.rule=(Host(`ld.landrs.org`) && PathPrefix(`/docs`))
       - traefik.http.routers.docs.priority=2
-      - traefik.http.routers.docs.tls=true
-      - traefik.http.routers.docs.tls.certresolver=le
       - traefik.http.services.docs.loadbalancer.server.port=80
       - traefik.http.middlewares.strip-prefix.chain.middlewares=strip-prefix-1,strip-prefix-2
       - traefik.http.middlewares.strip-prefix-1.redirectregex.regex=^(https?://[^/]+/[a-z0-9_]+)$$
@@ -54,6 +54,9 @@ services:
       - traefik.http.middlewares.strip-prefix-1.redirectregex.permanent=true
       - traefik.http.middlewares.strip-prefix-2.stripprefixregex.regex=/[a-z0-9_]+
       - traefik.http.routers.docs.middlewares=strip-prefix
+      # Comment out lines below for local dev
+      - traefik.http.routers.docs.tls=true
+      - traefik.http.routers.docs.tls.certresolver=le
     networks:
       - landrs
 
@@ -69,18 +72,29 @@ services:
       - traefik.http.routers.trifid-query.rule=(Host(`ld.landrs.org`) && Path(`/query`))
       - traefik.http.routers.trifid-query.service=trifid@docker
       - traefik.http.routers.trifid-query.priority=2
-      - traefik.http.routers.trifid-query.tls=true
-      - traefik.http.routers.trifid-query.tls.certresolver=le
       - traefik.http.middlewares.trifid-query.replacepath.path=/ds
       - traefik.http.routers.trifid-query.middlewares=trifid-query
       - traefik.http.routers.trifid-update.rule=(Host(`ld.landrs.org`) && Path(`/update`))
       - traefik.http.routers.trifid-update.service=trifid@docker
       - traefik.http.routers.trifid-update.priority=3
-      - traefik.http.routers.trifid-update.tls=true
-      - traefik.http.routers.trifid-update.tls.certresolver=le
       - traefik.http.middlewares.trifid-update.replacepath.path=/ds/update
       - traefik.http.middlewares.trifid-update-auth.basicauth.users=admin:$$2y$$10$$qT00E87LP6o15pUSFNnirusP.DxUhpxE8lPBrxOgQMq7c9flvd.Vm
       - traefik.http.routers.trifid-update.middlewares=trifid-update,trifid-update-auth
+      # Comment out lines below for local dev
+      - traefik.http.routers.trifid-query.tls=true
+      - traefik.http.routers.trifid-query.tls.certresolver=le
+      - traefik.http.routers.trifid-update.tls=true
+      - traefik.http.routers.trifid-update.tls.certresolver=le
+    networks:
+      - landrs
+
+  demo:
+    image: landrs/demo
+    build: ../demo
+    labels:
+      - traefik.http.routers.demo.rule=(Host(`ld.landrs.org`) && PathPrefix(`/demo`))
+      - traefik.http.middlewares.demo-prefix.stripprefix.prefixes=/demo
+      - traefik.http.routers.demo.middlewares=demo-prefix
     networks:
       - landrs
 
