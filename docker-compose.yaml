@@ -90,11 +90,30 @@ services:
 
   demo:
     image: landrs/demo
-    build: ../demo
+    build:
+      context: ../demo
+      args:
+        - VUE_APP_AXIOS_BASE_URL=http://ld.landrs.org/${QUERIES_PATH:-ejs}
     labels:
       - traefik.http.routers.demo.rule=(Host(`ld.landrs.org`) && PathPrefix(`/demo`))
       - traefik.http.middlewares.demo-prefix.stripprefix.prefixes=/demo
       - traefik.http.routers.demo.middlewares=demo-prefix
+    networks:
+      - landrs
+
+  queries:
+    image: landrs/queries
+    build: ../queries
+    environment:
+      - SPARQL_USERNAME=${SPARQL_USERNAME}
+      - SPARQL_PASSWORD=${SPARQL_PASSWORD}
+    expose:
+      - 3000
+    labels:
+      - traefik.http.services.queries.loadbalancer.server.port=3000
+      - traefik.http.routers.queries.rule=(Host(`ld.landrs.org`) && PathPrefix(`/${QUERIES_PATH:-ejs}`))
+      - traefik.http.middlewares.queries-prefix.stripprefix.prefixes=/${QUERIES_PATH:-ejs}
+      - traefik.http.routers.queries.middlewares=queries-prefix
     networks:
       - landrs
 
