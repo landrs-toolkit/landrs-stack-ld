@@ -17,6 +17,10 @@ if [ ! -d "../demo" ]; then
   git clone https://github.com/landrs-toolkit/landrs-demo-portal.git ../demo
 fi
 
+if [ ! -d "../queries" ]; then
+  git clone https://github.com/landrs-toolkit/landrs-sparql-service.git ../queries
+fi
+
 if ! [ -x "$(command -v docker-compose)" ]; then
   echo 'Error: docker-compose is not installed.' >&2
   exit 1
