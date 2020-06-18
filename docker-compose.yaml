@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   proxy:
@@ -28,7 +28,7 @@ services:
       landrs:
         aliases:
           - ld.landrs.org
-  
+
   trifid:
     image: landrs/trifid
     build: ../trifid
@@ -92,12 +92,22 @@ services:
     image: landrs/demo
     build:
       context: ../demo
+      target: build-stage
       args:
         - VUE_APP_AXIOS_BASE_URL=http://ld.landrs.org/${QUERIES_PATH:-ejs}
+    environment:
+      - VUE_APP_AXIOS_BASE_URL=http://ld.landrs.org/${QUERIES_PATH:-ejs}
+    command: npm run serve
+    volumes:
+      - '../demo:/app'
+      - '/app/node_modules'
+    expose:
+      - 8080
     labels:
+      - traefik.http.services.demo.loadbalancer.server.port=8080
       - traefik.http.routers.demo.rule=(Host(`ld.landrs.org`) && PathPrefix(`/demo`))
-      - traefik.http.middlewares.demo-prefix.stripprefix.prefixes=/demo
-      - traefik.http.routers.demo.middlewares=demo-prefix
+    #      - traefik.http.middlewares.demo-prefix.stripprefix.prefixes=/demo
+    #      - traefik.http.routers.demo.middlewares=demo-prefix
     networks:
       - landrs
 
