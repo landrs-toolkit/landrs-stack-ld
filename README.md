@@ -1,13 +1,18 @@
 # LANDRs stack
 
 ### Docker development setup
+Download and build the dependant repositories by running the following command:
+```bash
+./setup.sh
+```
+
 Create a `.env` file  in the project root with the following environment variables:
 ```
 SPARQL_USERNAME=fuseki_username
 SPARQL_PASSWORD=fuseki_password
 ```
 
-Run the following to build the container images:
+Optionally, run the following command to build the container images:
 ```bash
 docker-compose build
 ```
