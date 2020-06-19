@@ -28,3 +28,10 @@ docker-compose up -d
 ```
 
 If all is successful, you should be able to interact with the demo portal at [http://ld.landrs.org/demo](http://ld.landrs.org/demo).
+
+#### Install NPM Packages in demo portal
+To install packages for the demo portal you have to execute `npm` commands from within the container. For example, you
+can install the `helmet` package using the following command:
+```bash
+docker-compose exec demo npm install --save helmet
+```

@@ -92,7 +92,7 @@ services:
     image: landrs/demo
     build:
       context: ../demo
-      target: build-stage
+      target: develop-stage
       args:
         - VUE_APP_AXIOS_BASE_URL=http://ld.landrs.org/${QUERIES_PATH:-ejs}
     environment:
