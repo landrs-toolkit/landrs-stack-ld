@@ -97,6 +97,9 @@ services:
         - VUE_APP_AXIOS_BASE_URL=http://ld.landrs.org/${QUERIES_PATH:-ejs}
     environment:
       - VUE_APP_AXIOS_BASE_URL=http://ld.landrs.org/${QUERIES_PATH:-ejs}
+      - VUE_APP_SPARQL_BASE_URL=http://ld.landrs.org
+      - VUE_APP_SPARQL_USERNAME=${VUE_APP_SPARQL_USERNAME}
+      - VUE_APP_SPARQL_PASSWORD=${VUE_APP_SPARQL_PASSWORD}
     command: npm run serve
     volumes:
       - '../demo:/app'
