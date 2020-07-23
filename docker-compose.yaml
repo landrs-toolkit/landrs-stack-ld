@@ -97,7 +97,8 @@ services:
         - VUE_APP_AXIOS_BASE_URL=http://ld.landrs.org/${QUERIES_PATH:-ejs}
     environment:
       - VUE_APP_AXIOS_BASE_URL=http://ld.landrs.org/${QUERIES_PATH:-ejs}
-      - VUE_APP_SPARQL_BASE_URL=http://ld.landrs.org
+      - VUE_APP_SPARQL_BASE_URL=http://ld.landrs.org/toast/api/v1/sparql
+#      - VUE_APP_SPARQL_BASE_URL=http://ld.landrs.org
       - VUE_APP_SPARQL_USERNAME=${VUE_APP_SPARQL_USERNAME}
       - VUE_APP_SPARQL_PASSWORD=${VUE_APP_SPARQL_PASSWORD}
     command: npm run serve
@@ -114,19 +115,32 @@ services:
     networks:
       - landrs
 
-  queries:
-    image: landrs/queries
-    build: ../queries
-    environment:
-      - SPARQL_USERNAME=${SPARQL_USERNAME}
-      - SPARQL_PASSWORD=${SPARQL_PASSWORD}
+#  queries:
+#    image: landrs/queries
+#    build: ../queries
+#    environment:
+#      - SPARQL_USERNAME=${SPARQL_USERNAME}
+#      - SPARQL_PASSWORD=${SPARQL_PASSWORD}
+#    expose:
+#      - 3000
+#    labels:
+#      - traefik.http.services.queries.loadbalancer.server.port=3000
+#      - traefik.http.routers.queries.rule=(Host(`ld.landrs.org`) && PathPrefix(`/${QUERIES_PATH:-ejs}`))
+#      - traefik.http.middlewares.queries-prefix.stripprefix.prefixes=/${QUERIES_PATH:-ejs}
+#      - traefik.http.routers.queries.middlewares=queries-prefix
+#    networks:
+#      - landrs
+
+  toast:
+    image: landrs/toast
+    build: ../toast
     expose:
-      - 3000
+      - 5000
     labels:
-      - traefik.http.services.queries.loadbalancer.server.port=3000
-      - traefik.http.routers.queries.rule=(Host(`ld.landrs.org`) && PathPrefix(`/${QUERIES_PATH:-ejs}`))
-      - traefik.http.middlewares.queries-prefix.stripprefix.prefixes=/${QUERIES_PATH:-ejs}
-      - traefik.http.routers.queries.middlewares=queries-prefix
+      - traefik.http.services.toast.loadbalancer.server.port=5000
+      - traefik.http.routers.toast.rule=(Host(`ld.landrs.org`) && PathPrefix(`/toast`))
+      - traefik.http.middlewares.toast-prefix.stripprefix.prefixes=/toast
+      - traefik.http.routers.toast.middlewares=toast-prefix
     networks:
       - landrs
 
